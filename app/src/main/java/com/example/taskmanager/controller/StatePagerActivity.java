@@ -24,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +37,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class StatePagerActivity extends AppCompatActivity
@@ -73,14 +76,14 @@ public class StatePagerActivity extends AppCompatActivity
         mNavigationView = findViewById(R.id.navigation);
         Menu navigationMenu = mNavigationView.getMenu();
         MenuItem allUser = navigationMenu.findItem(R.id.all_user);
+
         allUser.setVisible(false);
         if (Repository.getInstance(this).getAdminID() != null &&
                 Repository.getInstance(this).getSessionUserID().toString().equals(Repository.getInstance(this).getAdminID().toString())) {
             allUser.setVisible(true);
         }
+
         mNavigationView.setNavigationItemSelectedListener(this);
-
-
         mDrawerLayout = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.open, R.string.close);
         mDrawerLayout.addDrawerListener(toggle);
@@ -132,7 +135,6 @@ public class StatePagerActivity extends AppCompatActivity
         });
     }
 
-
     public void setPagerAdapter() {
 
         mStatePagerAdapter = new StatePagerAdapter(getSupportFragmentManager()
@@ -171,6 +173,9 @@ public class StatePagerActivity extends AppCompatActivity
             case R.id.item_log_out:
                 Repository.getInstance(this).setSessionUserID(null);
                 finish();
+                break;
+            case R.id.item_search:
+                Toast.makeText(this, "dlajdohasod", Toast.LENGTH_SHORT).show();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -257,5 +262,6 @@ public class StatePagerActivity extends AppCompatActivity
             return POSITION_NONE;
         }
     }
+
 
 }

@@ -1,19 +1,29 @@
 package com.example.taskmanager.controller;
 
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.example.taskmanager.R;
@@ -21,13 +31,16 @@ import com.example.taskmanager.model.Repository;
 import com.example.taskmanager.model.Task;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TaskListFragment extends Fragment {
+
+
+public class TaskListFragment extends Fragment implements SearchView.OnQueryTextListener {
 
     private static final String ARG_LIST_TASK = "ListTask";
     private static final String TASK_EDIT_FRAGMENT_TAG = "taskEdit";
@@ -37,6 +50,7 @@ public class TaskListFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private TaskAdapter mTaskAdapter;
+
 
 
     public static TaskListFragment newInstance(Task.State state) {
@@ -55,6 +69,12 @@ public class TaskListFragment extends Fragment {
 
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_task_list, container, false);
@@ -70,9 +90,6 @@ public class TaskListFragment extends Fragment {
 
         return view;
     }
-
-
-
 
     public void updateUi() {
         assert getArguments() != null;
@@ -90,6 +107,50 @@ public class TaskListFragment extends Fragment {
         } else {
             mTaskAdapter.notifyDataSetChanged();
         }
+    }
+
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        MenuItem menuItem = menu.findItem(R.id.item_search);
+        SearchView searchView = (SearchView) menuItem.getActionView();
+        searchView.setOnQueryTextListener(this);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query)
+    {
+        return false;
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    public boolean onQueryTextChange(String newText) {
+
+        String userInput = newText.toLowerCase();
+        List<Task> tasks = Repository.getInstance(getActivity()).getTasksSeparateState(getArguments().getString(ARG_LIST_TASK));
+        List<Task> newTasks = new ArrayList<>();
+
+            tasks.stream()
+                    .filter(task -> task.getTitle().toLowerCase().startsWith(userInput))
+                    .forEach(newTasks::add);
+
+        if (mTaskAdapter == null) {
+            mTaskAdapter = new TaskAdapter(newTasks);
+            mRecyclerView.setAdapter(mTaskAdapter);
+        } else {
+            mTaskAdapter.setTasks(newTasks);
+            mTaskAdapter.notifyDataSetChanged();
+        }
+
+        if (userInput.equals("")) {
+            mTaskAdapter.setTasks(tasks);
+            mTaskAdapter.notifyDataSetChanged();
+        }
+
+        return true;
     }
 
     private class TaskHolder extends RecyclerView.ViewHolder {
@@ -129,6 +190,10 @@ public class TaskListFragment extends Fragment {
     public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
 
         private List<Task> mTasks;
+
+        public void setTasks(List<Task> tasks) {
+            mTasks = tasks;
+        }
 
         private TaskAdapter(List<Task> tasks) {
             mTasks = tasks;

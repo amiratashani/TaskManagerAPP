@@ -64,7 +64,6 @@ public class Repository {
         return mUserDao.loadAll();
     }
 
-
     public List<Task> getTasksSeparateState(String state) {
         return mTaskDao.queryBuilder()
                 .where(TaskDao.Properties.MUserId.eq(getSessionUserID().toString()))
