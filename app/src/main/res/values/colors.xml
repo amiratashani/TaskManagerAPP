@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#fc4a1a</color>
+    <color name="colorPrimaryDark">#FD9725</color>
+    <color name="colorAccent">#000</color>
+    <color name="colorSplashText">#F0F0F0</color>
+    <color name="card_bg_color">#F6F6F6</color>
+    <color name="title_text_color">#258BD6</color>
+    <color name="content_text_color">#999DA4</color>
+    <color name="tab1">#3787D6</color>
+    <color name="tab2">#E03FA2</color>
+    <color name="tab3">#56ab2f</color>
+    <color name="toolbar">#fc4a1a</color>
+    <color name="colorError">#FD9725</color>
+</resources>

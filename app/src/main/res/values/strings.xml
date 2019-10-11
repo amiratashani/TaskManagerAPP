@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Task Manager</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="task_manager">Task Manager</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="no_account_yet_create_one">No account yet? Create one</string>
+    <string name="create_account">Create Account</string>
+    <string name="already_a_member_login">Already a member? Login</string>
+    <string name="error_empty_username">Username not empty</string>
+    <string name="error_empty_password">Password not empty</string>
+    <string name="error_empty_title">Title not empty</string>
+    <string name="error_empty_description">Description not empty</string>
+    <string name="error_length_password">Password must have 4 number</string>
+    <string name="you_don_t_have_any_tasks">YOU DON\'T HAVE ANY TASKS</string>
+    <string name="pick_state">Pick State</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="todo">TODO</string>
+    <string name="doing">DOING</string>
+    <string name="done">DONE</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+</resources>
