@@ -3,8 +3,11 @@ package com.example.taskmanager.controller;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -29,7 +32,9 @@ import android.widget.TextView;
 import com.example.taskmanager.R;
 import com.example.taskmanager.model.Repository;
 import com.example.taskmanager.model.Task;
+import com.example.taskmanager.utils.PictureUtils;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +55,6 @@ public class TaskListFragment extends Fragment implements SearchView.OnQueryText
 
     private RecyclerView mRecyclerView;
     private TaskAdapter mTaskAdapter;
-
 
 
     public static TaskListFragment newInstance(Task.State state) {
@@ -82,8 +86,8 @@ public class TaskListFragment extends Fragment implements SearchView.OnQueryText
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 1, GridLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(gridLayoutManager);
 
-        mImageViewTask=view.findViewById(R.id.image_view_task);
-        mTextViewTask=view.findViewById(R.id.text_view_task);
+        mImageViewTask = view.findViewById(R.id.image_view_task);
+        mTextViewTask = view.findViewById(R.id.text_view_task);
 
 
         updateUi();
@@ -95,7 +99,7 @@ public class TaskListFragment extends Fragment implements SearchView.OnQueryText
         assert getArguments() != null;
         List<Task> tasks = Repository.getInstance(getContext()).getTasksSeparateState(getArguments().getString(ARG_LIST_TASK));
 
-        if (tasks.size()==0) {
+        if (tasks.size() == 0) {
             mImageViewTask.setVisibility(View.VISIBLE);
             mTextViewTask.setVisibility(View.VISIBLE);
         }
@@ -119,8 +123,7 @@ public class TaskListFragment extends Fragment implements SearchView.OnQueryText
     }
 
     @Override
-    public boolean onQueryTextSubmit(String query)
-    {
+    public boolean onQueryTextSubmit(String query) {
         return false;
     }
 
@@ -133,9 +136,9 @@ public class TaskListFragment extends Fragment implements SearchView.OnQueryText
         List<Task> tasks = Repository.getInstance(getActivity()).getTasksSeparateState(getArguments().getString(ARG_LIST_TASK));
         List<Task> newTasks = new ArrayList<>();
 
-            tasks.stream()
-                    .filter(task -> task.getTitle().toLowerCase().startsWith(userInput))
-                    .forEach(newTasks::add);
+        tasks.stream()
+                .filter(task -> task.getTitle().toLowerCase().startsWith(userInput))
+                .forEach(newTasks::add);
 
         if (mTaskAdapter == null) {
             mTaskAdapter = new TaskAdapter(newTasks);
@@ -155,14 +158,15 @@ public class TaskListFragment extends Fragment implements SearchView.OnQueryText
 
     private class TaskHolder extends RecyclerView.ViewHolder {
 
-        private TextView mTextViewTaskTitle, mTextViewTaskDate, mIcon;
+        private TextView mTextViewTaskTitle, mTextViewTaskDate;
+        private ImageView mImageViewTask;
         private Task mTask;
 
         private TaskHolder(@NonNull View itemView) {
             super(itemView);
             mTextViewTaskTitle = itemView.findViewById(R.id.text_view_task_title);
             mTextViewTaskDate = itemView.findViewById(R.id.text_view_task_date);
-            mIcon = itemView.findViewById(R.id.tvIcon);
+            mImageViewTask = itemView.findViewById(R.id.image_view_task);
 
             itemView.setOnClickListener(v -> {
                 TaskEditFragment taskEditFragment = TaskEditFragment.newInstance(mTask.getId());
@@ -177,10 +181,19 @@ public class TaskListFragment extends Fragment implements SearchView.OnQueryText
             SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy HH:mm");
             mTextViewTaskDate.setText(formatter.format(task.getDate()));
 
-            mIcon.setText(task.getTitle().substring(0,1).toUpperCase());
-            Random mRandom = new Random();
-            int color = Color.argb(255, mRandom.nextInt(256), mRandom.nextInt(256), mRandom.nextInt(256));
-            ((GradientDrawable) mIcon.getBackground()).setColor(color);
+            if (task.getImageUri() == null) {
+                Random mRandom = new Random();
+                int color = Color.argb(255, mRandom.nextInt(256), mRandom.nextInt(256), mRandom.nextInt(256));
+                ((GradientDrawable) mImageViewTask.getBackground()).setColor(color);
+            } else {
+                try {
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    Bitmap bitmap = PictureUtils.getScaledBitmap(Uri.parse(task.getImageUri()), getActivity(), options);
+                    mImageViewTask.setImageBitmap(bitmap);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
 
             mTask = task;
         }

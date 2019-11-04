@@ -24,4 +24,11 @@
     <string name="done">DONE</string>
     <string name="title">Title</string>
     <string name="description">Description</string>
+
+    <string name="username_edit_text_transition">username_edit_text_transition</string>
+    <string name="password_edit_text_transition">password_edit_text_transition</string>
+    <string name="admin">Admin</string>
+    <string name="pick_image">Pick Image</string>
+
+    <integer name="anim_duration_medium">700</integer>
 </resources>

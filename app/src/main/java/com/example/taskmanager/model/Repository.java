@@ -1,42 +1,29 @@
 package com.example.taskmanager.model;
 
-import android.content.ContentValues;
+
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.example.taskmanager.database.TaskManagerDBSchema;
 import com.example.taskmanager.greendao.TaskManagerOpenHelper;
 
-import org.greenrobot.greendao.Property;
-import org.greenrobot.greendao.query.DeleteQuery;
-
-import java.util.ArrayList;
-import java.util.Date;
+import java.io.File;
 import java.util.List;
 import java.util.UUID;
 
 public class Repository {
 
     private static Repository sRepository;
-    private UUID mAdminID;
+    private User mSessionUser = null;
     private Context mContext;
-    //private SQLiteDatabase mDatabase;
     private UserDao mUserDao;
     private TaskDao mTaskDao;
-    private UUID mSessionUserID;
 
-
-    public void setSessionUserID(UUID sessionUserID) {
-        mSessionUserID = sessionUserID;
+    public User getSessionUser() {
+        return mSessionUser;
     }
 
-    public UUID getAdminID() {
-        return mAdminID;
-    }
-
-    public void setAdminID(UUID adminID) {
-        mAdminID = adminID;
+    public void setSessionUser(User sessionUser) {
+        mSessionUser = sessionUser;
     }
 
     public static Repository getInstance(Context context) {
@@ -47,7 +34,6 @@ public class Repository {
 
     private Repository(Context context) {
         mContext = context.getApplicationContext();
-        //mDatabase = new TaskManagerOpenHelper(mContext).getWritableDatabase();
         SQLiteDatabase db = new TaskManagerOpenHelper(mContext).getWritableDatabase();
         DaoMaster daoMaster = new DaoMaster(db);
         DaoSession daoSession = daoMaster.newSession();
@@ -56,8 +42,16 @@ public class Repository {
         mTaskDao = daoSession.getTaskDao();
     }
 
-    public UUID getSessionUserID() {
-        return mSessionUserID;
+    public void createSession(String username, String password) throws Exception {
+
+        for (User item : getUsers()) {
+            if (item.getUsername().equals(username) && item.getPassword().equals(password)) {
+                mSessionUser = item;
+                return;
+            }
+        }
+
+        throw new Exception("This user name not exist you must register ");
     }
 
     public List<User> getUsers() {
@@ -65,8 +59,14 @@ public class Repository {
     }
 
     public List<Task> getTasksSeparateState(String state) {
+
+        if (mSessionUser.getIsAdmin()) {
+            return mTaskDao.queryBuilder()
+                    .where(TaskDao.Properties.MState.eq(state))
+                    .list();
+        }
         return mTaskDao.queryBuilder()
-                .where(TaskDao.Properties.MUserId.eq(getSessionUserID().toString()))
+                .where(TaskDao.Properties.MUserId.eq(mSessionUser.getId().toString()))
                 .where(TaskDao.Properties.MState.eq(state))
                 .list();
 
@@ -87,22 +87,6 @@ public class Repository {
         mTaskDao.insert(task);
     }
 
-    public void createSession(String username, String password) throws Exception {
-
-        for (User item : getUsers()) {
-            if (item.getUsername().equals("admin")) {
-                setAdminID(item.getId());
-            }
-        }
-
-        for (User item : getUsers()) {
-            if (item.getUsername().equals(username) && item.getPassword().equals(password)) {
-                setSessionUserID(item.getId());
-                return;
-            }
-        }
-        throw new Exception("This user name not exist you must register ");
-    }
 
     public User getUser(UUID uuid) {
         return mUserDao.queryBuilder()
@@ -128,8 +112,20 @@ public class Repository {
 
     public void deleteAllTask() {
         mTaskDao.queryBuilder()
-                .where(TaskDao.Properties.MUserId.eq(getSessionUserID().toString()))
+                .where(TaskDao.Properties.MUserId.eq(mSessionUser.getId().toString()))
                 .buildDelete()
                 .executeDeleteWithoutDetachingEntities();
     }
+
+    public File getPhotoFile(Task task) {
+
+        // /data/data/com.example.taskmanager/files
+        // String directory = mContext.getFilesDir().getAbsolutePath();
+        // /data/data/com.example.taskmanager/files/IMG_[UUID].jpg
+        // String path = directory + "/" + task.getPhotoName();
+        // File file = new File(path);
+
+        return new File(mContext.getFilesDir(), task.getPhotoName());
+    }
+
 }

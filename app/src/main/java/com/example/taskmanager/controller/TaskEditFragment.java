@@ -6,6 +6,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,20 +18,25 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
+import android.os.ParcelFileDescriptor;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.example.taskmanager.R;
 import com.example.taskmanager.model.Repository;
 import com.example.taskmanager.model.Task;
+import com.example.taskmanager.utils.PictureUtils;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -52,6 +60,7 @@ public class TaskEditFragment extends DialogFragment {
     private TextInputLayout mInputLayoutTitle, mInputLayoutDescription;
     private TextInputEditText mEditTextTitle, mEditTextDescription;
     private MaterialButton mButtonDate, mButtonTime, mButtonState;
+    private ImageView mImageViewTask;
 
     private Task mTask;
     private Date mDateRes;
@@ -96,6 +105,7 @@ public class TaskEditFragment extends DialogFragment {
         mDate = mTask.getDate();
         mTime = mTask.getDate();
     }
+
 
     @NonNull
     @Override
@@ -301,11 +311,26 @@ public class TaskEditFragment extends DialogFragment {
         mInputLayoutTitle = view.findViewById(R.id.text_input_title);
         mInputLayoutDescription = view.findViewById(R.id.text_input_description);
 
+
         mEditTextTitle.setText(mTask.getTitle());
         mEditTextDescription.setText(mTask.getDescription());
         mButtonDate.setText(formatterDate.format(mTask.getDate()));
         mButtonTime.setText(formatterTime.format(mTask.getDate()));
         mButtonState.setText(mTask.getState().toString());
+
+
+        mImageViewTask = view.findViewById(R.id.image_view_task);
+
+
+        if (mTask.getImageUri() != null)
+            try {
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                Bitmap bitmap = PictureUtils.getScaledBitmap(Uri.parse(mTask.getImageUri()), getActivity(), options);
+                mImageViewTask.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
 
         mEditTextTitle.setEnabled(false);
         mEditTextDescription.setEnabled(false);

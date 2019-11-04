@@ -11,6 +11,7 @@ import org.greenrobot.greendao.annotation.Index;
 import org.greenrobot.greendao.annotation.Property;
 
 import java.util.UUID;
+
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity(nameInDb = "User")
@@ -20,7 +21,7 @@ public class User {
 
     @Property(nameInDb = "uuid")
     @Index(unique = true)
-    @Convert(converter = UUIDConverter.class , columnType = String.class)
+    @Convert(converter = UUIDConverter.class, columnType = String.class)
     private UUID mId;
 
     @Property(nameInDb = "username")
@@ -30,10 +31,15 @@ public class User {
     private String mPassword;
 
 
-    public User(String username, String password) {
+    @Property(nameInDb = "IsAdmin")
+    private boolean mIsAdmin;
+
+
+    public User(String username, String password,boolean isAdmin) {
         mId = UUID.randomUUID();
         mUsername = username;
         mPassword = password;
+        mIsAdmin=isAdmin;
     }
 
     public UUID getId() {
@@ -57,20 +63,27 @@ public class User {
         mPassword = password;
     }
 
-    public User() {
-        mId = UUID.randomUUID();
+    public boolean getIsAdmin() {
+        return mIsAdmin;
     }
 
-    public User(UUID Id) {
-        mId = Id;
+    public void setIsAdmin(boolean admin) {
+        mIsAdmin = admin;
     }
 
-    @Generated(hash = 315455814)
-    public User(Long _id, UUID mId, String mUsername, String mPassword) {
+
+    @Generated(hash = 2086302879)
+    public User(Long _id, UUID mId, String mUsername, String mPassword,
+                boolean mIsAdmin) {
         this._id = _id;
         this.mId = mId;
         this.mUsername = mUsername;
         this.mPassword = mPassword;
+        this.mIsAdmin = mIsAdmin;
+    }
+
+    @Generated(hash = 586692638)
+    public User() {
     }
 
     @Override
@@ -117,5 +130,13 @@ public class User {
 
     public void setMPassword(String mPassword) {
         this.mPassword = mPassword;
+    }
+
+    public boolean getMIsAdmin() {
+        return this.mIsAdmin;
+    }
+
+    public void setMIsAdmin(boolean mIsAdmin) {
+        this.mIsAdmin = mIsAdmin;
     }
 }

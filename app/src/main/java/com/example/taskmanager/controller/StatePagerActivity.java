@@ -65,8 +65,8 @@ public class StatePagerActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        UUID uuid = Repository.getInstance(this).getSessionUserID();
-        mUser = Repository.getInstance(this).getUser(uuid);
+
+        mUser = Repository.getInstance(this).getSessionUser();
 
         setContentView(R.layout.navigation_drawer);
 
@@ -78,8 +78,8 @@ public class StatePagerActivity extends AppCompatActivity
         MenuItem allUser = navigationMenu.findItem(R.id.all_user);
 
         allUser.setVisible(false);
-        if (Repository.getInstance(this).getAdminID() != null &&
-                Repository.getInstance(this).getSessionUserID().toString().equals(Repository.getInstance(this).getAdminID().toString())) {
+        if (Repository.getInstance(this).getSessionUser() != null &&
+                Repository.getInstance(this).getSessionUser().getIsAdmin()) {
             allUser.setVisible(true);
         }
 
@@ -171,11 +171,10 @@ public class StatePagerActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.item_log_out:
-                Repository.getInstance(this).setSessionUserID(null);
+                Repository.getInstance(this).setSessionUser(null);
                 finish();
                 break;
             case R.id.item_search:
-                Toast.makeText(this, "dlajdohasod", Toast.LENGTH_SHORT).show();
                 break;
         }
         return super.onOptionsItemSelected(item);

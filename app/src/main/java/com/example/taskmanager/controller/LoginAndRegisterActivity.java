@@ -1,19 +1,22 @@
 package com.example.taskmanager.controller;
 
+
+
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.animation.Animator;
+
+
 import android.content.Context;
 import android.content.Intent;
+
+
 import android.os.Bundle;
 
+import android.util.Log;
 
+
+import com.amitshekhar.DebugDB;
 import com.example.taskmanager.R;
-import com.example.taskmanager.model.Repository;
-import com.example.taskmanager.model.Task;
-import com.example.taskmanager.model.User;
-
-import java.util.Date;
 
 public class LoginAndRegisterActivity extends AppCompatActivity {
 
@@ -23,14 +26,19 @@ public class LoginAndRegisterActivity extends AppCompatActivity {
         return intent;
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_and_register);
+        Log.i("MYTAG", DebugDB.getAddressLog());
+
+        LoginFragment loginFragment=LoginFragment.newInstance();
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container_fragment_login_register,new LoginFragment())
+                .replace(R.id.container_fragment_login_register, loginFragment)
                 .commit();
     }
+
 
 }

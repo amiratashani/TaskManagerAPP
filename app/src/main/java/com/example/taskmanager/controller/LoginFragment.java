@@ -1,13 +1,11 @@
 package com.example.taskmanager.controller;
 
 
+import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,14 +13,16 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.fragment.app.Fragment;
+import androidx.transition.Slide;
+
 import com.example.taskmanager.R;
 import com.example.taskmanager.model.Repository;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class LoginFragment extends Fragment {
 
     private Button mButtonLogin;
@@ -43,6 +43,15 @@ public class LoginFragment extends Fragment {
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -67,7 +76,8 @@ public class LoginFragment extends Fragment {
                 mTextInputUsername.setError(null); // Clear the error
                 mTextInputPassword.setError(null);
                 try {
-                    Repository.getInstance(getContext()).createSession(mEditTextUsername.getText().toString(), mEditTextPassword.getText().toString());
+                    Repository.getInstance(getContext()).createSession(mEditTextUsername.getText().toString(),
+                            mEditTextPassword.getText().toString());
                     //Repository.getInstance(getContext()).createSession("amir", "1234");
                     startActivity(StatePagerActivity.newIntent(getActivity()));
                 } catch (Exception e) {
@@ -79,8 +89,21 @@ public class LoginFragment extends Fragment {
         });
 
         mTextViewCreateAcc.setOnClickListener(v -> {
+
             RegisterFragment registerFragment = RegisterFragment.newInstance();
-            getFragmentManager().beginTransaction().replace(R.id.container_fragment_login_register, registerFragment).commit();
+
+            Slide slideTransition = new Slide(Gravity.END);
+            slideTransition.setDuration(getResources().getInteger(R.integer.anim_duration_medium));
+
+            registerFragment.setEnterTransition(slideTransition);
+            registerFragment.setAllowEnterTransitionOverlap(false);
+
+            getFragmentManager().beginTransaction()
+                    //.setCustomAnimations(R.anim.fragment_in_right, R.anim.fragment_out_left)
+                    .replace(R.id.container_fragment_login_register, registerFragment)
+//                    .addSharedElement(mTextInputUsername, getString(R.string.username_edit_text_transition))
+//                    .addSharedElement(mTextInputPassword,getString(R.string.password_edit_text_transition))
+                    .commit();
         });
 
         return view;
@@ -137,7 +160,6 @@ public class LoginFragment extends Fragment {
             }
         });
     }
-
 
     private boolean isValidUsername(@Nullable String text) {
         return text != null && !(text.isEmpty());

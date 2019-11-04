@@ -11,10 +11,10 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Index;
 import org.greenrobot.greendao.annotation.Property;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.Random;
 import java.util.UUID;
+
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
@@ -25,11 +25,11 @@ public class Task {
 
     @Property(nameInDb = "uuid")
     @Index(unique = true)
-    @Convert(converter = UUIDConverter.class , columnType = String.class)
+    @Convert(converter = UUIDConverter.class, columnType = String.class)
     private UUID mId;
 
     @Property(nameInDb = "user_uuid")
-    @Convert(converter = UUIDConverter.class , columnType = String.class)
+    @Convert(converter = UUIDConverter.class, columnType = String.class)
     private UUID mUserId;
 
     @Property(nameInDb = "title")
@@ -42,40 +42,23 @@ public class Task {
     private Date mDate;
 
     @Property(nameInDb = "state")
-    @Convert(converter = StateConverter.class,columnType = String.class)
+    @Convert(converter = StateConverter.class, columnType = String.class)
     private State mState;
 
-    public Task(String title, String description, Date date, State state, Context context) {
+    @Property(nameInDb = "image_uri")
+    private String mImageUri;
+
+
+    public Task( Context context) {
         mId = UUID.randomUUID();
-        mUserId = Repository.getInstance(context).getSessionUserID();
-        mTitle = title;
-        mDescription = description;
-        mDate = date;
-        mState = state;
+        mUserId = Repository.getInstance(context).getSessionUser().getId();
+
     }
 
 
     public Task(UUID id, UUID userId) {
         mId = id;
         mUserId = userId;
-    }
-
-
-    @Generated(hash = 1405551169)
-    public Task(Long _id, UUID mId, UUID mUserId, String mTitle, String mDescription,
-            Date mDate, State mState) {
-        this._id = _id;
-        this.mId = mId;
-        this.mUserId = mUserId;
-        this.mTitle = mTitle;
-        this.mDescription = mDescription;
-        this.mDate = mDate;
-        this.mState = mState;
-    }
-
-
-    @Generated(hash = 733837707)
-    public Task() {
     }
 
 
@@ -120,6 +103,38 @@ public class Task {
         mState = state;
     }
 
+    public String getImageUri() {
+        return mImageUri;
+    }
+
+    public void setImageUri(String imageUri) {
+        mImageUri = imageUri;
+    }
+
+    public String getPhotoName() {
+        return "IMG_" + getId() + ".jpg";
+    }
+
+    //---------------------------------------------------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------------------------------------------------
+
+    @Generated(hash = 880516326)
+    public Task(Long _id, UUID mId, UUID mUserId, String mTitle, String mDescription, Date mDate, State mState, String mImageUri) {
+        this._id = _id;
+        this.mId = mId;
+        this.mUserId = mUserId;
+        this.mTitle = mTitle;
+        this.mDescription = mDescription;
+        this.mDate = mDate;
+        this.mState = mState;
+        this.mImageUri = mImageUri;
+    }
+
+
+    @Generated(hash = 733837707)
+    public Task() {
+    }
 
     public Long get_id() {
         return this._id;
@@ -188,6 +203,16 @@ public class Task {
 
     public void setMState(State mState) {
         this.mState = mState;
+    }
+
+
+    public String getMImageUri() {
+        return this.mImageUri;
+    }
+
+
+    public void setMImageUri(String mImageUri) {
+        this.mImageUri = mImageUri;
     }
 
 

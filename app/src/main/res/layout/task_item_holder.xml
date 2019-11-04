@@ -52,8 +52,8 @@
 
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/tvIcon"
+    <ImageView
+        android:id="@+id/image_view_task"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginTop="16dp"
