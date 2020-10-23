@@ -3,9 +3,9 @@
 TaskManager - You can write tasks in app.
 ## Introduction
 
-The application uses Clean Architecture based on MVVM and Repository patterns.
+The application uses Clean Architecture based on MVC and Repository patterns.
 
-The application is written entirely in Kotlin.
+The application is written entirely in java.
 
 Use GreenDao for save tasks in database.
 ## Screenshots
